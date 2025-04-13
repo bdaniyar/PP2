@@ -19,6 +19,9 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 
+
+size = 20
+bomb = pygame.Rect(random.randint(0, (SCREEN_WIDTH // GRID_SIZE) - 1) * GRID_SIZE, random.randint(0, (SCREEN_HEIGHT // GRID_SIZE) - 1) * GRID_SIZE,size,size)
 # Create the screen
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Snake Game")
@@ -49,13 +52,17 @@ class Food:
     def draw(self):
         """Draws food with color based on weight."""
         color = {1: RED, 2: BLUE, 3: WHITE}[self.weight]
-        pygame.draw.rect(screen, color, pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE))
-    
+        # pygame.draw.rect(screen, color, pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen,RED,pygame.Rect(self.x,self.y, GRID_SIZE-10,GRID_SIZE-10))
+        pygame.draw.rect(screen,RED,pygame.Rect(self.x,self.y, GRID_SIZE+5,GRID_SIZE+10))
+        pygame.draw.rect(screen,RED,pygame.Rect(self.x,self.y, GRID_SIZE+10,GRID_SIZE+10))
     def update(self):
         """Reduces the food timer and regenerates if time runs out."""
         self.timer -= 1
         if self.timer <= 0:
             self.generate()
+    
+
 
 # Create food object
 food = Food()
@@ -123,7 +130,9 @@ while running:
     if score % LEVEL_UP_FOOD == 0 and score > 0:
         level = (score // LEVEL_UP_FOOD) + 1
         speed = SNAKE_SPEED + (level - 1) * 2  # Increase speed
-
+    
+    if bomb.colliderect(pygame.Rect(snake[0][0], snake[0][1], GRID_SIZE, GRID_SIZE)):
+        running = False
     # Update food timer
     food.update()
 
@@ -133,8 +142,8 @@ while running:
     # Draw snake
     for segment in snake:
         pygame.draw.rect(screen, GREEN, pygame.Rect(segment[0], segment[1], GRID_SIZE, GRID_SIZE))
-
-    # Draw food
+    
+    pygame.draw.rect(screen,WHITE,bomb)
     food.draw()
 
     # Display score and level
